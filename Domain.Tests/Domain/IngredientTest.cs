@@ -192,8 +192,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             ingredient.Name.Should().Be(newName);
-            ingredient.ModifiedBy.Should().Be(modifiedBy);
-            ingredient.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            ingredient.LastModifiedBy.Should().Be(modifiedBy);
+            ingredient.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Theory(DisplayName = "Deve lançar exceção ao atualizar com modifiedBy inválido")]
@@ -269,7 +269,7 @@ namespace Domain.Tests.Entities
 
             // Act - Primeira atualização
             ingredient.UpdateName(firstNewName, firstModifier);
-            var firstModifiedDate = ingredient.ModifiedDate;
+            var firstModifiedDate = ingredient.LastModifiedDate;
 
             // Aguardar um pouco para garantir que o tempo mude
             System.Threading.Thread.Sleep(10);
@@ -279,8 +279,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             ingredient.Name.Should().Be(secondNewName);
-            ingredient.ModifiedBy.Should().Be(secondModifier);
-            ingredient.ModifiedDate.Should().BeAfter(firstModifiedDate);
+            ingredient.LastModifiedBy.Should().Be(secondModifier);
+            ingredient.LastModifiedDate.Should().BeAfter(firstModifiedDate);
         }
 
         #endregion
@@ -325,8 +325,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             ingredient.Name.Should().Be(_validName);
-            ingredient.ModifiedBy.Should().Be(modifier);
-            ingredient.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            ingredient.LastModifiedBy.Should().Be(modifier);
+            ingredient.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         #endregion
@@ -347,8 +347,8 @@ namespace Domain.Tests.Entities
             // Assert
             ingredient.CreatedDate.Should().Be(createdDate);
             ingredient.CreatedBy.Should().Be(_validCreatedBy);
-            ingredient.ModifiedBy.Should().Be("modifier");
-            ingredient.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            ingredient.LastModifiedBy.Should().Be("modifier");
+            ingredient.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve atualizar ModifiedDate ao chamar UpdateName")]
@@ -356,7 +356,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var ingredient = new Ingredient(_validName, _validCreatedBy);
-            var initialModifiedDate = ingredient.ModifiedDate;
+            var initialModifiedDate = ingredient.LastModifiedDate;
 
             // Aguardar um pouco para garantir que o tempo mude
             System.Threading.Thread.Sleep(10);
@@ -365,7 +365,7 @@ namespace Domain.Tests.Entities
             ingredient.UpdateName("Novo Nome", "modifier");
 
             // Assert
-            ingredient.ModifiedDate.Should().BeAfter(initialModifiedDate);
+            ingredient.LastModifiedDate.Should().BeAfter(initialModifiedDate);
         }
 
         #endregion
@@ -402,7 +402,7 @@ namespace Domain.Tests.Entities
             // Assert
             act.Should().NotThrow();
             ingredient.Name.Should().Be(validNewName);
-            ingredient.ModifiedBy.Should().Be(validModifier);
+            ingredient.LastModifiedBy.Should().Be(validModifier);
         }
 
         #endregion

@@ -31,7 +31,7 @@ namespace Domain.Tests.Entities
             user.PasswordHash.Should().Be(_validPasswordHash);
             user.CreatedBy.Should().Be(_validCreatedBy);
             user.CreatedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-            user.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            user.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve criar usuário válido sem Id")]
@@ -168,8 +168,8 @@ namespace Domain.Tests.Entities
             // Assert
             user.Name.Should().Be(newName);
             user.Email.Should().Be(newEmail);
-            user.ModifiedBy.Should().Be(modifiedBy);
-            user.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            user.LastModifiedBy.Should().Be(modifiedBy);
+            user.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve lançar exceção ao atualizar perfil com nome inválido")]
@@ -219,8 +219,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             user.PasswordHash.Should().Be(newPasswordHash);
-            user.ModifiedBy.Should().Be(modifiedBy);
-            user.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            user.LastModifiedBy.Should().Be(modifiedBy);
+            user.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Theory(DisplayName = "Deve lançar exceção ao alterar senha com hash inválido")]
@@ -302,12 +302,12 @@ namespace Domain.Tests.Entities
             // Act
             user.GetType().GetProperty("CreatedDate")!
                 .SetValue(user, createdDate);
-            user.GetType().GetProperty("ModifiedBy")!
+            user.GetType().GetProperty("LastModifiedBy")!
                 .SetValue(user, modifiedBy);
 
             // Assert
             user.CreatedDate.Should().Be(createdDate);
-            user.ModifiedBy.Should().Be(modifiedBy);
+            user.LastModifiedBy.Should().Be(modifiedBy);
         }
 
         [Fact(DisplayName = "Deve marcar como modificado corretamente")]
@@ -315,16 +315,16 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
-            var originalModifiedDate = user.ModifiedDate;
+            var originalModifiedDate = user.LastModifiedDate;
             var modifier = "NewAdmin";
 
             // Act
             user.MarkAsModified(modifier);
 
             // Assert
-            user.ModifiedBy.Should().Be(modifier);
-            user.ModifiedDate.Should().BeAfter(originalModifiedDate);
-            user.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            user.LastModifiedBy.Should().Be(modifier);
+            user.LastModifiedDate.Should().BeAfter(originalModifiedDate);
+            user.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         #endregion

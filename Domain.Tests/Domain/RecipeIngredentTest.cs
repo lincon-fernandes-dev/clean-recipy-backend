@@ -277,8 +277,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             recipeIngredient.Quantity.Should().Be(newQuantity);
-            recipeIngredient.ModifiedBy.Should().Be(modifiedBy);
-            recipeIngredient.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            recipeIngredient.LastModifiedBy.Should().Be(modifiedBy);
+            recipeIngredient.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Theory(DisplayName = "Deve lançar exceção ao atualizar com quantidade inválida")]
@@ -325,7 +325,7 @@ namespace Domain.Tests.Entities
 
             // Act - Primeira atualização
             recipeIngredient.UpdateQuantity(firstNewQuantity, "chef_1");
-            var firstModifiedDate = recipeIngredient.ModifiedDate;
+            var firstModifiedDate = recipeIngredient.LastModifiedDate;
 
             // Aguardar um pouco para garantir que o tempo mude
             System.Threading.Thread.Sleep(10);
@@ -335,8 +335,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             recipeIngredient.Quantity.Should().Be(secondNewQuantity);
-            recipeIngredient.ModifiedBy.Should().Be("chef_2");
-            recipeIngredient.ModifiedDate.Should().BeAfter(firstModifiedDate);
+            recipeIngredient.LastModifiedBy.Should().Be("chef_2");
+            recipeIngredient.LastModifiedDate.Should().BeAfter(firstModifiedDate);
         }
 
         #endregion
@@ -389,8 +389,8 @@ namespace Domain.Tests.Entities
             // Assert
             recipeIngredient.CreatedDate.Should().Be(createdDate);
             recipeIngredient.CreatedBy.Should().Be(_validCreatedBy);
-            recipeIngredient.ModifiedBy.Should().Be("modifier");
-            recipeIngredient.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            recipeIngredient.LastModifiedBy.Should().Be("modifier");
+            recipeIngredient.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve atualizar ModifiedDate ao chamar UpdateQuantity")]
@@ -398,7 +398,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var recipeIngredient = new RecipeIngredient(_validRecipeId, _validIngredientId, _validQuantity, _validUnidadeMedida, _validCreatedBy);
-            var initialModifiedDate = recipeIngredient.ModifiedDate;
+            var initialModifiedDate = recipeIngredient.LastModifiedDate;
 
             // Aguardar um pouco para garantir que o tempo mude
             System.Threading.Thread.Sleep(10);
@@ -407,7 +407,7 @@ namespace Domain.Tests.Entities
             recipeIngredient.UpdateQuantity(3.0m, "modifier");
 
             // Assert
-            recipeIngredient.ModifiedDate.Should().BeAfter(initialModifiedDate);
+            recipeIngredient.LastModifiedDate.Should().BeAfter(initialModifiedDate);
         }
 
         #endregion

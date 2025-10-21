@@ -31,6 +31,7 @@ namespace Domain.Entities
             Validate(name, this.CreatedBy);
             ValidateDomain(string.IsNullOrEmpty(modifiedBy), "Para Poder atualizar o Ingrediente é necessario fornacer o nome do usuario que esta o modificando");
             ValidateDomain(modifiedBy.Length < 4, "O nome de usuario para modificação deve ter pelo menos 4 caracteres");
+            ValidateDomain(modifiedBy.Length > 128, "O nome de usuario deve ter no maximo 128 caracteres");
 
             Name = name;
             MarkAsModified(modifiedBy);
@@ -44,6 +45,7 @@ namespace Domain.Entities
 
             ValidateDomain(string.IsNullOrEmpty(createdBy), "O nome de usuario é obrigatorio");
             ValidateDomain(createdBy.Length < 4, "O nome de usuario deve ter pelo menos 4 caracteres");
+            ValidateDomain(createdBy.Length > 128, "O nome de usuario deve ter no maximo 128 caracteres");
         }
     }
 }

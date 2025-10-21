@@ -102,7 +102,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var vote = new Vote(_validUserId, _validRecipeId, true, _validCreatedBy);
-            var originalModifiedDate = vote.ModifiedDate;
+            var originalModifiedDate = vote.LastModifiedDate;
             var modifiedBy = "modified_user";
 
             // Act
@@ -110,9 +110,9 @@ namespace Domain.Tests.Entities
 
             // Assert
             vote.IsUpvote.Should().BeFalse();
-            vote.ModifiedBy.Should().Be(modifiedBy);
-            vote.ModifiedDate.Should().BeAfter(originalModifiedDate);
-            vote.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            vote.LastModifiedBy.Should().Be(modifiedBy);
+            vote.LastModifiedDate.Should().BeAfter(originalModifiedDate);
+            vote.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve alterar voto de downvote para upvote")]
@@ -120,7 +120,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var vote = new Vote(_validUserId, _validRecipeId, false, _validCreatedBy);
-            var originalModifiedDate = vote.ModifiedDate;
+            var originalModifiedDate = vote.LastModifiedDate;
             var modifiedBy = "modified_user";
 
             // Act
@@ -128,8 +128,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             vote.IsUpvote.Should().BeTrue();
-            vote.ModifiedBy.Should().Be(modifiedBy);
-            vote.ModifiedDate.Should().BeAfter(originalModifiedDate);
+            vote.LastModifiedBy.Should().Be(modifiedBy);
+            vote.LastModifiedDate.Should().BeAfter(originalModifiedDate);
         }
 
         [Fact(DisplayName = "Deve manter mesmo valor ao alterar para o mesmo tipo de voto")]
@@ -137,7 +137,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var vote = new Vote(_validUserId, _validRecipeId, true, _validCreatedBy);
-            var originalModifiedDate = vote.ModifiedDate;
+            var originalModifiedDate = vote.LastModifiedDate;
             var modifiedBy = "modified_user";
 
             // Act
@@ -145,8 +145,8 @@ namespace Domain.Tests.Entities
 
             // Assert
             vote.IsUpvote.Should().BeTrue();
-            vote.ModifiedBy.Should().Be(modifiedBy);
-            vote.ModifiedDate.Should().BeAfter(originalModifiedDate);
+            vote.LastModifiedBy.Should().Be(modifiedBy);
+            vote.LastModifiedDate.Should().BeAfter(originalModifiedDate);
         }
 
         [Theory(DisplayName = "Deve alterar voto múltiplas vezes")]
@@ -162,14 +162,14 @@ namespace Domain.Tests.Entities
 
             // Act
             vote.ChangeVote(firstChange, modifiedBy);
-            var firstModifiedDate = vote.ModifiedDate;
+            var firstModifiedDate = vote.LastModifiedDate;
 
             vote.ChangeVote(secondChange, $"{modifiedBy}_2");
 
             // Assert
             vote.IsUpvote.Should().Be(secondChange);
-            vote.ModifiedBy.Should().Be($"{modifiedBy}_2");
-            vote.ModifiedDate.Should().BeAfter(firstModifiedDate);
+            vote.LastModifiedBy.Should().Be($"{modifiedBy}_2");
+            vote.LastModifiedDate.Should().BeAfter(firstModifiedDate);
         }
 
         #endregion
@@ -223,8 +223,8 @@ namespace Domain.Tests.Entities
             // Assert
             vote.CreatedDate.Should().Be(createdDate);
             vote.CreatedBy.Should().Be(createdBy);
-            vote.ModifiedBy.Should().Be("modifier");
-            vote.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            vote.LastModifiedBy.Should().Be("modifier");
+            vote.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Fact(DisplayName = "Deve atualizar ModifiedDate ao chamar ChangeVote")]
@@ -232,7 +232,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var vote = new Vote(_validUserId, _validRecipeId, _validIsUpvote, _validCreatedBy);
-            var initialModifiedDate = vote.ModifiedDate;
+            var initialModifiedDate = vote.LastModifiedDate;
 
             // Aguardar um pouco para garantir que o tempo mude
             System.Threading.Thread.Sleep(10);
@@ -241,7 +241,7 @@ namespace Domain.Tests.Entities
             vote.ChangeVote(false, "modifier");
 
             // Assert
-            vote.ModifiedDate.Should().BeAfter(initialModifiedDate);
+            vote.LastModifiedDate.Should().BeAfter(initialModifiedDate);
         }
 
         #endregion

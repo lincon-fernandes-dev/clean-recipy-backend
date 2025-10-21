@@ -381,8 +381,8 @@ namespace Domain.Tests.Entities
             recipe.Name.Should().Be(newName);
             recipe.Description.Should().Be(newDescription);
             recipe.Instructions.Should().Be(newInstructions);
-            recipe.ModifiedBy.Should().Be(modifiedBy);
-            recipe.ModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+            recipe.LastModifiedBy.Should().Be(modifiedBy);
+            recipe.LastModifiedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
 
         [Theory(DisplayName = "Deve lançar exceção ao atualizar com modifiedBy inválido")]
