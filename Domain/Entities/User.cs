@@ -22,7 +22,7 @@
         public User(int id, string name, string email, string passwordHash, string createdBy)
         {
             Validate(name, email, passwordHash);
-            ValidateDomain(id < 1, "Id inválido, Id deve ser um numero inteiro e positivo");
+            ValidateDomain(id < 1, "Id inválido. Id deve ser um número inteiro e positivo.");
 
             Id = id;
             Name = name;
