@@ -73,12 +73,6 @@ namespace Infra.Data.EntitiesConfiguration
 
             builder.HasIndex(x => x.IngredientId)
                 .HasDatabaseName("IX_RecipeIngredients_IngredientId");
-
-            // Relacionamentos
-            builder.HasOne(x => x.Recipe)
-                .WithMany(x => x.Ingredients)
-                .HasForeignKey(x => x.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

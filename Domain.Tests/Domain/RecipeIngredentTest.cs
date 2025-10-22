@@ -350,7 +350,6 @@ namespace Domain.Tests.Entities
             var recipeIngredient = new RecipeIngredient(_validRecipeId, _validIngredientId, _validQuantity, _validUnidadeMedida, _validCreatedBy);
 
             // Assert
-            recipeIngredient.Recipe.Should().BeNull();
             recipeIngredient.Ingredient.Should().BeNull();
         }
 
@@ -367,7 +366,6 @@ namespace Domain.Tests.Entities
             recipeIngredient.GetType().GetProperty("Ingredient")!.SetValue(recipeIngredient, ingredient);
 
             // Assert
-            recipeIngredient.Recipe.Should().Be(recipe);
             recipeIngredient.Ingredient.Should().Be(ingredient);
         }
 

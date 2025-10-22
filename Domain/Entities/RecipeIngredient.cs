@@ -5,7 +5,6 @@ namespace Domain.Entities
     public sealed class RecipeIngredient : Entity
     {
         public int RecipeId { get; private set; }
-        public Recipe Recipe { get; private set; } = null!;
 
         public int IngredientId { get; private set; }
         public Ingredient Ingredient { get; private set; } = null!;

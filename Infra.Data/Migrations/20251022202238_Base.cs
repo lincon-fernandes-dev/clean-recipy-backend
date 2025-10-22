@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class inicial : Migration
+    public partial class Base : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -355,15 +355,13 @@ namespace Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Recipe", "Recipe")
+                    b.HasOne("Domain.Entities.Recipe", null)
                         .WithMany("Ingredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Ingredient");
-
-                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vote", b =>

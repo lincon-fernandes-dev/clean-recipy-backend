@@ -1,4 +1,7 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces.Services;
+using Application.Mappings;
+using Application.Services;
+using Domain.Interfaces;
 using Infra.Data;
 using Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +23,11 @@ namespace Infra.IoC
             services.AddScoped<IRecipeRepository, RecipeRepository>();
             services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+
+            
+            services.AddAutoMapper(cfg => cfg.AddProfile<DomainToDTOMappingProfile>());
 
             return services;
         }

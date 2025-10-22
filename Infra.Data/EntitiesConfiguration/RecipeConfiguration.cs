@@ -73,10 +73,7 @@ namespace Infra.Data.EntitiesConfiguration
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.HasMany(x => x.Ingredients)
-                .WithOne(x => x.Recipe)
-                .HasForeignKey(x => x.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.Ingredients);
 
             builder.HasMany(x => x.Votes)
                 .WithOne(x => x.Recipe)
