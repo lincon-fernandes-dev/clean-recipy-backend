@@ -1,25 +1,28 @@
-﻿namespace Domain.Entities
+﻿using Domain.Enums;
+
+namespace Domain.Entities
 {
     public sealed class User : Entity
     {
         public string Name { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
         public string PasswordHash { get; private set; } = string.Empty;
-        
+        public UserStatus Status { get; private set; }
         public ICollection<Recipe> Recipes { get; private set; } = new List<Recipe>();
         public ICollection<Vote> Votes { get; private set; } = new List<Vote>();
 
         private User() { } // EF Core requer construtor privado
 
-        public User(string name, string email, string passwordHash, string createdBy)
+        public User(string name, string email, string passwordHash, UserStatus status, string createdBy)
         {
             Validate(name, email, passwordHash);
             Name = name;
             Email = email;
             PasswordHash = passwordHash;
             CreatedBy = createdBy;
+            Status = status;
         }
-        public User(int id, string name, string email, string passwordHash, string createdBy)
+        public User(int id, string name, string email, string passwordHash, UserStatus status, string createdBy)
         {
             Validate(name, email, passwordHash);
             ValidateDomain(id < 1, "Id inválido. Id deve ser um número inteiro e positivo.");
@@ -29,6 +32,7 @@
             Email = email;
             PasswordHash = passwordHash;
             CreatedBy = createdBy;
+            Status = status;
         }
 
         public void UpdateProfile(string name, string email, string modifiedBy)

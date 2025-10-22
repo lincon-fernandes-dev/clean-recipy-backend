@@ -1,7 +1,8 @@
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Validation;
-using System;
 using FluentAssertions;
+using System;
 using Xunit;
 
 namespace Domain.Tests.Entities
@@ -192,7 +193,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var vote = new Vote(_validUserId, _validRecipeId, _validIsUpvote, _validCreatedBy);
-            var user = new User("Test User", "test@email.com", "hash", _validCreatedBy);
+            var user = new User("Test User", "test@email.com", "hash", UserStatus.Active, _validCreatedBy);
             var recipe = new Recipe("Test Recipe", "Description com 25 caracteres minimo", "instructions  com 25 caracteres minimo", 30, _validCreatedBy);
 
             // Act

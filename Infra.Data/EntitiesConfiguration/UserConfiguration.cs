@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -34,6 +35,14 @@ namespace Infra.Data.EntitiesConfiguration
                 .IsRequired()
                 .HasColumnName("PasswordHash");
 
+            // Status
+            builder.Property(x => x.Status)
+                .IsRequired()
+                .HasConversion<int>()
+                .HasColumnName("Status")
+                .HasDefaultValue(UserStatus.Active)
+                .HasSentinel((UserStatus)999);
+
             // Campos de Auditoria
             builder.Property(x => x.CreatedDate)
                 .IsRequired()
@@ -42,7 +51,7 @@ namespace Infra.Data.EntitiesConfiguration
 
             builder.Property(x => x.LastModifiedDate)
                 .IsRequired()
-                .HasColumnName("ModifiedDate")
+                .HasColumnName("LastModifiedDate")
                 .HasDefaultValueSql("GETUTCDATE()");
 
             builder.Property(x => x.CreatedBy)
@@ -53,7 +62,7 @@ namespace Infra.Data.EntitiesConfiguration
             builder.Property(x => x.LastModifiedBy)
                 .HasMaxLength(128)
                 .IsRequired()
-                .HasColumnName("ModifiedBy")
+                .HasColumnName("LastModifiedBy")
                 .HasDefaultValue("System");
 
             // Índices
@@ -64,28 +73,33 @@ namespace Infra.Data.EntitiesConfiguration
             builder.HasIndex(x => x.Name)
                 .HasDatabaseName("IX_Users_Name");
 
+            builder.HasIndex(x => x.Status)
+                .HasDatabaseName("IX_Users_Status");
+
             // Relacionamentos
             builder.HasMany(x => x.Recipes)
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(x => x.Recipes)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired(false) // ✅ Torna opcional
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             builder.HasMany(x => x.Votes)
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired(false) // ✅ Torna opcional  
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-            // Configurações adicionais
-            builder.HasQueryFilter(x => !x.CreatedBy.Contains("DELETED")); // Exemplo de soft delete
+            // ✅ Query Filter para Soft Delete - Agora seguro!
+            builder.HasQueryFilter(x => x.Status != UserStatus.Deleted);
 
-            // Dados padrão (opcional - para desenvolvimento)
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            {
-                builder.HasData(
-                    new User(1, "Administrador Sistema", "admin@recipes.com", "hashed_password", "system"),
-                    new User(2, "Chef João Silva", "chef.joao@recipes.com", "hashed_password", "system")
-                );
-            }
+
+           
+
         }
     }
 }

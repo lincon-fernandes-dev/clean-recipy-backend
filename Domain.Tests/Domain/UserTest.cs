@@ -3,6 +3,7 @@ using Domain.Validation;
 using System;
 using FluentAssertions;
 using Xunit;
+using Domain.Enums;
 
 namespace Domain.Tests.Entities
 {
@@ -22,7 +23,7 @@ namespace Domain.Tests.Entities
             var id = 1;
 
             // Act
-            var user = new User(id, _validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(id, _validName, _validEmail, _validPasswordHash, UserStatus.Active,  _validCreatedBy);
 
             // Assert
             user.Id.Should().Be(id);
@@ -38,7 +39,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithoutId_ShouldSucceed()
         {
             // Act
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Id.Should().Be(0);
@@ -55,7 +56,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithInvalidId_ShouldThrowException(int invalidId)
         {
             // Act
-            Action act = () => new User(invalidId, _validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            Action act = () => new User(invalidId, _validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             act.Should().Throw<DomainExceptionValidation>()
@@ -76,7 +77,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithInvalidName_ShouldThrowException(string invalidName, string expectedMessage)
         {
             // Act
-            Action act = () => new User(invalidName, _validEmail, _validPasswordHash, _validCreatedBy);
+            Action act = () => new User(invalidName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             act.Should().Throw<DomainExceptionValidation>()
@@ -91,7 +92,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithValidName_ShouldSucceed(string validName)
         {
             // Act
-            var user = new User(validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Name.Should().Be(validName);
@@ -109,7 +110,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithInvalidEmail_ShouldThrowException(string invalidEmail, string expectedMessage)
         {
             // Act
-            Action act = () => new User(_validName, invalidEmail, _validPasswordHash, _validCreatedBy);
+            Action act = () => new User(_validName, invalidEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             act.Should().Throw<DomainExceptionValidation>()
@@ -125,7 +126,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithValidEmail_ShouldSucceed(string validEmail)
         {
             // Act
-            var user = new User(_validName, validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Email.Should().Be(validEmail);
@@ -142,7 +143,7 @@ namespace Domain.Tests.Entities
         public void CreateUser_WithInvalidPassword_ShouldThrowException(string invalidPassword, string expectedMessage)
         {
             // Act
-            Action act = () => new User(_validName, _validEmail, invalidPassword, _validCreatedBy);
+            Action act = () => new User(_validName, _validEmail, invalidPassword, UserStatus.Active, _validCreatedBy);
 
             // Assert
             act.Should().Throw<DomainExceptionValidation>()
@@ -157,7 +158,7 @@ namespace Domain.Tests.Entities
         public void UpdateProfile_WithValidData_ShouldSucceed()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var newName = "Jane Smith Updated";
             var newEmail = "jane.updated@test.com";
             var modifiedBy = "admin";
@@ -176,7 +177,7 @@ namespace Domain.Tests.Entities
         public void UpdateProfile_WithInvalidName_ShouldThrowException()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var invalidName = "Jo";
 
             // Act
@@ -191,7 +192,7 @@ namespace Domain.Tests.Entities
         public void UpdateProfile_WithInvalidEmail_ShouldThrowException()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var invalidEmail = "invalid-email";
 
             // Act
@@ -210,7 +211,7 @@ namespace Domain.Tests.Entities
         public void ChangePassword_WithValidHash_ShouldSucceed()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var newPasswordHash = "new_hashed_password";
             var modifiedBy = "admin";
 
@@ -230,7 +231,7 @@ namespace Domain.Tests.Entities
         public void ChangePassword_WithInvalidHash_ShouldThrowException(string invalidPasswordHash)
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Act
             Action act = () => user.ChangePassword(invalidPasswordHash, "admin");
@@ -248,7 +249,7 @@ namespace Domain.Tests.Entities
         public void User_ShouldInitializeEmptyCollections()
         {
             // Act
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Recipes.Should().NotBeNull();
@@ -261,7 +262,7 @@ namespace Domain.Tests.Entities
         public void User_ShouldAllowAddingRecipes()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var recipe = new Recipe("Test Recipe", "Description com 25 caracteres minimo", "instructions com 25 caracteres minimo", 30, _validCreatedBy);
 
             // Act
@@ -276,7 +277,7 @@ namespace Domain.Tests.Entities
         public void User_ShouldAllowAddingVotes()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var vote = new Vote(1, 1, true, _validCreatedBy);
 
             // Act
@@ -295,7 +296,7 @@ namespace Domain.Tests.Entities
         public void SetAuditFields_ShouldAllowSettingCreatedAndModified()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var createdDate = new DateTime(2025, 10, 20);
             var modifiedBy = "Admin";
 
@@ -314,7 +315,7 @@ namespace Domain.Tests.Entities
         public void MarkAsModified_ShouldUpdateAuditFields()
         {
             // Arrange
-            var user = new User(_validName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
             var originalModifiedDate = user.LastModifiedDate;
             var modifier = "NewAdmin";
 
@@ -338,7 +339,7 @@ namespace Domain.Tests.Entities
             var exactName = "Maria";
 
             // Act
-            var user = new User(exactName, _validEmail, _validPasswordHash, _validCreatedBy);
+            var user = new User(exactName, _validEmail, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Name.Should().Be(exactName);
@@ -351,7 +352,7 @@ namespace Domain.Tests.Entities
             var emailWithMultipleAt = "user@name@domain.com";
 
             // Act
-            var user = new User(_validName, emailWithMultipleAt, _validPasswordHash, _validCreatedBy);
+            var user = new User(_validName, emailWithMultipleAt, _validPasswordHash, UserStatus.Active, _validCreatedBy);
 
             // Assert
             user.Email.Should().Be(emailWithMultipleAt);

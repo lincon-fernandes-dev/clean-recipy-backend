@@ -480,7 +480,7 @@ namespace Domain.Tests.Entities
         {
             // Arrange
             var recipe = new Recipe(_validName, _validDescription, _validInstructions, _validUserId, _validCreatedBy);
-            var user = new User("Test User", "test@email.com", "hash", _validCreatedBy);
+            var user = new User("Test User", "test@email.com", "hash", UserStatus.Active, _validCreatedBy);
 
             // Act
             recipe.GetType().GetProperty("User")!.SetValue(recipe, user);
