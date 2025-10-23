@@ -1,7 +1,11 @@
 ﻿using Application.DTOs;
 using Application.Interfaces.Services;
 using AutoMapper;
+using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
+using Domain.Validation;
+
 namespace Application.Services;
 public class UserService : IUserService
 {
@@ -19,6 +23,35 @@ public class UserService : IUserService
         var entity = await _repository.GetByIdAsync(id);
         var dto = _mapper.Map<UserDTO>(entity);
         return dto;
+    }
+    public async Task<UserDTO?> Create(UserDTO dto)
+    {
+        try
+        {
+            var createdBy = "system";
+            var status = UserStatus.Active;
+
+            var user = new User(
+                name: dto.Name,
+                email: dto.Email,
+                passwordHash: dto.PasswordHash, 
+                status: status,
+                createdBy: createdBy
+            );
+
+            var retorno = await _repository.CreateAsync(user);
+            return _mapper.Map<UserDTO>(retorno);
+        }
+        catch (DomainExceptionValidation ex)
+        {
+            Console.WriteLine($"Erro de validação: {ex.Message}");
+            throw;
+        }
+    }
+    public async Task<UserDTO?> Update(UserDTO dto)
+    {
+        var entity = _mapper.Map<User>(dto);
+        return _mapper.Map<UserDTO>(await _repository.UpdateAsync(entity));
     }
     public async Task<UserDTO?> DeleteById(int id)
     {

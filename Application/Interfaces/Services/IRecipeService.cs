@@ -9,9 +9,11 @@ namespace Application.Interfaces.Services
 {
     public interface IRecipeService
     {
-        Task<RecipeDTO?> GetAllRecipes();
+        Task<IEnumerable<RecipeDTO?>> GetAllRecipes();
         Task<RecipeDTO?> GetById(int id);
-        Task<RecipeDTO?> DeleteById(int id);
-        Task<RecipeDTO?> GetRecipeByIngredient(IngredientDTO ingredientDTO);
+        Task<IEnumerable<RecipeDTO?>> GetRecipesWithIngredientsAsync(IngredientDTO ingredientDTO);
+        Task<RecipeDTO?> CreateRecipe(RecipeDTO recipeDTO);
+        Task<RecipeDTO?> UpdateRecipe(RecipeDTO recipeDTO);
+        Task<RecipeDTO?> DeleteById(RecipeDTO dto);
     }
 }

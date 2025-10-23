@@ -25,8 +25,9 @@ namespace Infra.IoC
             services.AddScoped<IIngredientRepository, IngredientRepository>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRecipeService, RecipeService>();
+            services.AddScoped<IIngredientService, IngredientService>();
 
-            
             services.AddAutoMapper(cfg => cfg.AddProfile<DomainToDTOMappingProfile>());
 
             return services;

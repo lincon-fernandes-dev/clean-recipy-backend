@@ -11,11 +11,19 @@ namespace Infra.Data.Repositories
         {
             _context = context;
         }
-        public async Task<Recipe> CreateAsync(Recipe entity)
+        public async Task<Recipe> CreateAsync(Recipe recipe)
         {
-            _context.Add(entity);
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                if(ingredient.Id < 1)
+                {
+                    _context.Ingredients.Add(ingredient.Ingredient);
+                }
+            };
+            _context.Add(recipe);
+
             await _context.SaveChangesAsync();
-            return entity;
+            return recipe;
         }
         public async Task<Recipe> UpdateAsync(Recipe entity)
         {

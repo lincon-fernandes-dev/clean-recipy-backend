@@ -31,15 +31,22 @@ public class RecipeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetRecipeByIngredient(IngredientDTO ingredient)
     {
-        var recipes = await _recipeService.GetRecipeByIngredient(ingredient);
+        var recipes = await _recipeService.GetRecipesWithIngredientsAsync(ingredient);
         if (recipes == null)
             NoContent();
         return Ok(recipes);
     }
-    [HttpDelete]
-    public async Task<IActionResult> DeleteById(int id)
+    [HttpPost]
+    public async Task<IActionResult> AddRecipe(RecipeDTO recipe)
     {
-        var deletedRecipe = await _recipeService.DeleteById(id);
+        var newRecipe = await _recipeService.CreateRecipe(recipe);
+        return Ok(newRecipe);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteById(RecipeDTO recipe)
+    {
+        var deletedRecipe = await _recipeService.DeleteById(recipe);
         if (deletedRecipe == null)
             return NotFound();
         return Ok(deletedRecipe);

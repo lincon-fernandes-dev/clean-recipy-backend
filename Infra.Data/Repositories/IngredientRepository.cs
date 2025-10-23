@@ -38,14 +38,16 @@ namespace Infra.Data.Repositories
         {
             return await _context.Ingredients.FindAsync(id);
         }
-        public async Task<IEnumerable<Ingredient>> GetIngredientsAsync()
+        public async Task<IEnumerable<Ingredient>?> GetIngredientsAsync()
         {
             return await _context.Ingredients.OrderBy(i => i.Name).ToListAsync();
         }
 
-        public async Task<Ingredient?> GetIngredientByNameAsync(string name)
+        public async Task<IEnumerable<Ingredient>?> GetIngredientsByNameAsync(string name)
         {
-            return await _context.Ingredients.FirstOrDefaultAsync(i => i.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+            return await _context.Ingredients
+                    .Where(i => i.Name == name)
+                    .ToListAsync();
         }
     }
 }
