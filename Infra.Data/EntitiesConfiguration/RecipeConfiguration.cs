@@ -16,69 +16,91 @@ namespace Infra.Data.EntitiesConfiguration
 
             // Propriedades
             builder.Property(x => x.Id)
+                .HasColumnName("IdRecipe")
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
-            builder.Property(x => x.Name)
+            builder.Property(x => x.Title)
                 .HasMaxLength(100)
                 .IsRequired()
-                .HasColumnName("Name");
+                .HasColumnName("Title");
 
             builder.Property(x => x.Description)
                 .HasMaxLength(524)
                 .IsRequired()
                 .HasColumnName("Description");
 
-            builder.Property(x => x.Instructions)
-                .HasMaxLength(600)
+            builder.Property(x => x.ImageUrl)
+                .HasMaxLength(100)
                 .IsRequired()
-                .HasColumnName("Instructions");
+                .HasColumnName("ImageUrl");
 
-            builder.Property(x => x.UserId)
+            builder.Property(r => r.Difficulty)
                 .IsRequired()
-                .HasColumnName("UserId");
+                .HasMaxLength(20)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => v
+                );
+
+            builder.Property(r => r.PreparationTime)
+                .IsRequired();
+
+            builder.Property(r => r.Servings)
+                .IsRequired();
+
+            builder.Property(x => x.IdUser)
+                .IsRequired()
+                .HasColumnName("IdUser");
 
             // Campos de Auditoria
-            builder.Property(x => x.CreatedDate)
+            builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasColumnName("CreatedDate")
+                .HasColumnName("CreatedAt")
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.Property(x => x.LastModifiedDate)
+            builder.Property(x => x.UpdatedAt)
                 .IsRequired()
-                .HasColumnName("LastModifiedDate")
+                .HasColumnName("UpdatedAt")
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.Property(x => x.CreatedBy)
-                .HasMaxLength(128)
-                .IsRequired()
-                .HasColumnName("CreatedBy");
+            // Relationships
+            builder.HasOne(r => r.User)
+                .WithMany(u => u.Recipes)
+                .HasForeignKey(r => r.IdUser)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
-            builder.Property(x => x.LastModifiedBy)
-                .HasMaxLength(128)
-                .IsRequired()
-                .HasColumnName("LastModifiedBy")
-                .HasDefaultValue("System");
+            builder.HasMany(r => r.Ingredients)
+                .WithOne(i => i.Recipe)
+                .HasForeignKey(i => i.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Índices
-            builder.HasIndex(x => x.Name)
-                .HasDatabaseName("IX_Recipes_Name");
+            builder.HasMany(r => r.Instructions)
+                .WithOne(i => i.Recipe)
+                .HasForeignKey(i => i.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasIndex(x => x.UserId)
-                .HasDatabaseName("IX_Recipes_UserId");
+            builder.HasMany(r => r.RecipeTags)
+                .WithOne(rt => rt.Recipe)
+                .HasForeignKey(rt => rt.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Relacionamentos
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.Recipes)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasMany(r => r.RecipeLikes)
+                .WithOne(rl => rl.Recipe)
+                .HasForeignKey(rl => rl.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(r => r.Comments)
+                .WithOne(c => c.Recipe)
+                .HasForeignKey(c => c.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(r => r.NutritionInfo)
+                .WithOne(n => n.Recipe)
+                .HasForeignKey<NutritionInfo>(n => n.IdRecipe)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.Ingredients);
-
-            builder.HasMany(x => x.Votes)
-                .WithOne(x => x.Recipe)
-                .HasForeignKey(x => x.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

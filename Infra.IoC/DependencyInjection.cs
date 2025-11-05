@@ -15,18 +15,10 @@ namespace Infra.IoC
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options => 
-                options.UseSqlServer(configuration.GetConnectionString("DefaulConnection"
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"
                 ), b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IVoteRepository, VoteRepository>();
-            services.AddScoped<IRecipeRepository, RecipeRepository>();
-            services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
-            services.AddScoped<IIngredientRepository, IngredientRepository>();
 
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRecipeService, RecipeService>();
-            services.AddScoped<IIngredientService, IngredientService>();
 
             services.AddAutoMapper(cfg => cfg.AddProfile<DomainToDTOMappingProfile>());
 

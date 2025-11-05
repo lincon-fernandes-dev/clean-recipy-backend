@@ -1,27 +1,31 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Infra.Data.EntitiesConfiguration
 {
-    public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
+    public class InstructionConfiguration : IEntityTypeConfiguration<Instruction>
     {
-        public void Configure(EntityTypeBuilder<Ingredient> builder)
+        public void Configure(EntityTypeBuilder<Instruction> builder)
         {
-            // Tabela
-            builder.ToTable("Ingredients");
+            builder.ToTable("Instructions");
 
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.Id)
                 .ValueGeneratedOnAdd()
-                .HasColumnName("IdIngredient")
+                .HasColumnName("IdInstruction")
                 .IsRequired();
 
-            builder.Property(i => i.Name)
-                .HasMaxLength(100)
+            builder.Property(i => i.Content)
                 .IsRequired()
-                .HasColumnName("Name");
+                .HasMaxLength(1000)
+                .HasColumnName("Content");
 
             builder.Property(i => i.IdRecipe)
                 .IsRequired()
@@ -38,19 +42,14 @@ namespace Infra.Data.EntitiesConfiguration
                 .HasColumnName("UpdatedAt")
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasOne<Recipe>()
-                .WithMany(r => r.Ingredients)
-                .HasForeignKey("RecipeId")
-                .OnDelete(DeleteBehavior.Cascade);
-
+            // Relationships
             builder.HasOne(i => i.Recipe)
-                .WithMany(r => r.Ingredients)
+                .WithMany(r => r.Instructions)
                 .HasForeignKey(i => i.IdRecipe)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Índices
             builder.HasIndex(i => i.IdRecipe);
-            builder.HasIndex(i => i.Name);
         }
     }
 }

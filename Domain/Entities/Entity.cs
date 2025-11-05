@@ -5,15 +5,15 @@ namespace Domain.Entities
     public abstract class Entity
     {
         public int Id { get; protected set; }
-        public DateTime CreatedDate { get; protected set; } = DateTime.UtcNow;
-        public DateTime LastModifiedDate { get; protected set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; protected set; } = DateTime.UtcNow;
         public string CreatedBy { get; protected set; } = string.Empty;
         public string LastModifiedBy { get; protected set; } = string.Empty;
 
         public void MarkAsModified(string modifiedBy)
         {
             LastModifiedBy = modifiedBy;
-            LastModifiedDate = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         protected static void ValidateDomain(bool condition, string errorMessage)
@@ -22,5 +22,4 @@ namespace Domain.Entities
                 throw new DomainExceptionValidation(errorMessage);
         }
     }
-
 }

@@ -35,8 +35,7 @@ public class UserService : IUserService
                 name: dto.Name,
                 email: dto.Email,
                 passwordHash: dto.PasswordHash, 
-                status: status,
-                createdBy: createdBy
+                status: status
             );
 
             var retorno = await _repository.CreateAsync(user);

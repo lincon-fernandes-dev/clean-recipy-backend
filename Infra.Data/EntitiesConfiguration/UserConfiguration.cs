@@ -12,11 +12,12 @@ namespace Infra.Data.EntitiesConfiguration
             // Tabela
             builder.ToTable("Users");
 
-            // Chave Primária
+            // Chave Primária\
             builder.HasKey(x => x.Id);
 
             // Propriedades
             builder.Property(x => x.Id)
+                .HasColumnName("IdUser")
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
@@ -25,17 +26,18 @@ namespace Infra.Data.EntitiesConfiguration
                 .IsRequired()
                 .HasColumnName("Name");
 
-            builder.Property(x => x.Email)
-                .HasMaxLength(256)
-                .IsRequired()
-                .HasColumnName("Email");
+            builder.Property(u => u.Email)
+               .IsRequired()
+               .HasMaxLength(255);
+
+            builder.Property(u => u.Avatar)
+                .HasMaxLength(500);
 
             builder.Property(x => x.PasswordHash)
                 .HasMaxLength(512)
                 .IsRequired()
                 .HasColumnName("PasswordHash");
 
-            // Status
             builder.Property(x => x.Status)
                 .IsRequired()
                 .HasConversion<int>()
@@ -43,27 +45,11 @@ namespace Infra.Data.EntitiesConfiguration
                 .HasDefaultValue(UserStatus.Active)
                 .HasSentinel((UserStatus)999);
 
-            // Campos de Auditoria
-            builder.Property(x => x.CreatedDate)
-                .IsRequired()
-                .HasColumnName("CreatedDate")
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            builder.Property(x => x.LastModifiedDate)
+            builder.Property(x => x.UpdatedAt)
                 .IsRequired()
                 .HasColumnName("LastModifiedDate")
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.Property(x => x.CreatedBy)
-                .HasMaxLength(128)
-                .IsRequired()
-                .HasColumnName("CreatedBy");
-
-            builder.Property(x => x.LastModifiedBy)
-                .HasMaxLength(128)
-                .IsRequired()
-                .HasColumnName("LastModifiedBy")
-                .HasDefaultValue("System");
 
             // Índices
             builder.HasIndex(x => x.Email)
@@ -77,28 +63,25 @@ namespace Infra.Data.EntitiesConfiguration
                 .HasDatabaseName("IX_Users_Status");
 
             // Relacionamentos
-            builder.HasMany(x => x.Recipes)
-                .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(u => u.Recipes)
+               .WithOne(r => r.User)
+               .HasForeignKey(r => r.IdUser)
+               .OnDelete(DeleteBehavior.ClientCascade); 
 
-            builder.HasMany(x => x.Recipes)
-                .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId)
-                .IsRequired(false) // ✅ Torna opcional
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasMany(u => u.Comments)
+                .WithOne(c => c.User)
+                .HasForeignKey(c => c.IdUser)
+                .OnDelete(DeleteBehavior.ClientCascade); 
 
-            builder.HasMany(x => x.Votes)
-                .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId)
-                .IsRequired(false) // ✅ Torna opcional  
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasMany(u => u.RecipeLikes)
+                .WithOne(rl => rl.User)
+                .HasForeignKey(rl => rl.IdUser)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
-            // ✅ Query Filter para Soft Delete - Agora seguro!
-            builder.HasQueryFilter(x => x.Status != UserStatus.Deleted);
-
-
-           
+            builder.HasMany(u => u.CommentLikes)
+                .WithOne(cl => cl.User)
+                .HasForeignKey(cl => cl.IdUser)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
         }
     }

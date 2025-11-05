@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using System.Xml.Linq;
 
 namespace Domain.Entities
 {
@@ -7,19 +8,23 @@ namespace Domain.Entities
         public string Name { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
         public string PasswordHash { get; private set; } = string.Empty;
+        public string Avatar { get; private set; } = string.Empty;
+        public bool IsVerified { get; set; } = false;
         public UserStatus Status { get; private set; }
+
         public ICollection<Recipe> Recipes { get; private set; } = new List<Recipe>();
-        public ICollection<Vote> Votes { get; private set; } = new List<Vote>();
+        public ICollection<RecipeLike> RecipeLikes { get; private set; } = new List<RecipeLike>();
+        public ICollection<Comment> Comments { get; private set; } = new List<Comment>();
+        public ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
 
-        private User() { } // EF Core requer construtor privado
+        private User() { } 
 
-        public User(string name, string email, string passwordHash, UserStatus status, string createdBy)
+        public User(string name, string email, string passwordHash, UserStatus status)
         {
             Validate(name, email, passwordHash);
             Name = name;
             Email = email;
             PasswordHash = passwordHash;
-            CreatedBy = createdBy;
             Status = status;
         }
         public User(int id, string name, string email, string passwordHash, UserStatus status, string createdBy)

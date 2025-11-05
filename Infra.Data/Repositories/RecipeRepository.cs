@@ -17,7 +17,7 @@ namespace Infra.Data.Repositories
             {
                 if(ingredient.Id < 1)
                 {
-                    _context.Ingredients.Add(ingredient.Ingredient);
+                    
                 }
             };
             _context.Add(recipe);
@@ -50,18 +50,14 @@ namespace Infra.Data.Repositories
         public async Task<IEnumerable<Recipe>?> GetRecipesByUserIdAsync(int userId)
         {
             return await _context.Recipes
-                .Where(i => i.UserId == userId)
+                .Where(i => i.IdUser == userId)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Recipe>?> GetRecipesWithIngredientsAsync(Ingredient ingredient)
         {
             return await _context.Recipes
-                .Where(r => r.Ingredients.Any(ri => ri.IngredientId == ingredient.Id))
-                .Include(r => r.User)
-                .Include(r => r.Ingredients)
-                    .ThenInclude(ri => ri.Ingredient)
-                .OrderByDescending(r => r.CreatedDate)
+                .Where(r => r.Ingredients.Any(ri => ri.Id == ingredient.Id))
                 .ToListAsync();
         }
     }
