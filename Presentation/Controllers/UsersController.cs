@@ -1,12 +1,13 @@
 ﻿using Application.DTOs;
 using Application.Interfaces.Services;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(IUserService userService) : ControllerBase
+public class UsersController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
@@ -17,14 +18,14 @@ public class UserController(IUserService userService) : ControllerBase
         if (user == null) return NoContent();
         return Ok(user);
     }
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetUserById(int id)
+    [HttpGet("{email}")]
+    public async Task<ActionResult<RecipeDTO>> GetUserByEmail(string email)
     {
-        var user = await _userService.GetById(id);
-        if (user == null)
-            return NoContent();
+        var user = await _userService.GetByEmailAsync(email);
+
         return Ok(user);
     }
+
     [HttpPut]
     public async Task<IActionResult> Update(UserDTO dto)
     {

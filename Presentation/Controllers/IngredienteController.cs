@@ -13,7 +13,7 @@ public class IngredientController(IIngredientService userService) : ControllerBa
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetAll()
     {
-        var ingredient = await _ingredientService.GetAll();
+        var ingredient = await _ingredientService.GetAllAsync();
         if (ingredient == null)
             return NoContent();
         return Ok(ingredient);
@@ -21,14 +21,14 @@ public class IngredientController(IIngredientService userService) : ControllerBa
     [HttpGet("GetIngredientsByName")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var ingredient = await _ingredientService.GetByName(name);
+        var ingredient = await _ingredientService.GetByNameAsync(name);
         if (ingredient == null) return NoContent();
         return Ok(ingredient);
     }
     [HttpPost("CreateIngredient")]
     public async Task<IActionResult> Create(IngredientDTO dto)
     {
-        var newIngredient = await _ingredientService.Create(dto);
+        var newIngredient = await _ingredientService.CreateAsync(dto);
         if (newIngredient == null)
             return NotFound();
         return Ok(newIngredient);
@@ -36,7 +36,7 @@ public class IngredientController(IIngredientService userService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> Update(IngredientDTO dto)
     {
-        var newIngredient = await _ingredientService.Update(dto);
+        var newIngredient = await _ingredientService.UpdateAsync(dto);
         if (newIngredient == null)
             return NotFound();
         return Ok(newIngredient);
@@ -44,9 +44,8 @@ public class IngredientController(IIngredientService userService) : ControllerBa
     [HttpDelete]
     public async Task<IActionResult> Delete(IngredientDTO dto)
     {
-        var deletedIngredient = await _ingredientService.Delete(dto);
-        if (deletedIngredient == null)
-            return NotFound();
+        var deletedIngredient = await _ingredientService.DeleteAsync(dto.Id);
+        
         return Ok(deletedIngredient);
     }
 }
