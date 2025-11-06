@@ -19,6 +19,21 @@ namespace Infra.IoC
                 ), b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
 
+            // Repositories
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRecipeRepository, RecipeRepository>();
+            services.AddScoped<IIngredientRepository, IngredientRepository>();
+            services.AddScoped<IInstructionRepository, InstructionRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IRecipeTagRepository, RecipeTagRepository>();
+            services.AddScoped<INutritionInfoRepository, NutritionInfoRepository>();
+
+            // Services
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRecipeService, RecipeService>();
+            services.AddScoped<IIngredientService, IngredientService>();
+            services.AddScoped<IInstructionService, InstructionService>();
+            services.AddScoped<ITagService, TagService>();
 
             services.AddAutoMapper(cfg => cfg.AddProfile<DomainToDTOMappingProfile>());
 
