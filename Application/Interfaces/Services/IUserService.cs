@@ -8,5 +8,6 @@ namespace Application.Interfaces.Services
         Task<UserDTO?> GetById(int id);
         Task<UserDTO?> Update(UserDTO dto);
         Task<UserDTO?> DeleteById(int id);
+        Task<UserDTO?> GetByEmailAsync(string email);
     }
 }

@@ -28,14 +28,19 @@ public class UserService : IUserService
     {
         try
         {
-            var createdBy = "system";
             var status = UserStatus.Active;
 
             var user = new User(
                 name: dto.Name,
                 email: dto.Email,
-                passwordHash: dto.PasswordHash, 
-                status: status
+                passwordHash: dto.PasswordHash,
+                avatar: dto.Avatar,
+                isVerified: dto.IsVerified,
+                status: status,
+                createdAt: DateTime.UtcNow,
+                updatedAt: DateTime.UtcNow,
+                createdBy: "system",
+                lastModifiedBy: "system"
             );
 
             var retorno = await _repository.CreateAsync(user);
@@ -61,6 +66,16 @@ public class UserService : IUserService
         }
         var deletedUser = _repository.DeleteAsync(entity);
         var dto = _mapper.Map<UserDTO>(deletedUser);
+        return dto;
+    }
+    public async Task<UserDTO?> GetByEmailAsync(string email)
+    {
+        var entity = await _repository.GetByEmailAsync(email);
+        if (entity == null)
+        {
+            return null;
+        }
+        var dto = _mapper.Map<UserDTO>(entity);
         return dto;
     }
 }
