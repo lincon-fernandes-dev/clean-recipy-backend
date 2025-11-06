@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infra.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Data.Repositories
@@ -38,16 +37,16 @@ namespace Infra.Data.Repositories
         {
             return await _context.Ingredients.FindAsync(id);
         }
-        public async Task<IEnumerable<Ingredient>?> GetIngredientsAsync()
-        {
-            return await _context.Ingredients.OrderBy(i => i.Name).ToListAsync();
-        }
 
-        public async Task<IEnumerable<Ingredient>?> GetIngredientsByNameAsync(string name)
+        public async Task<IEnumerable<Ingredient>> GetIngredientsByNameAsync(string name)
         {
             return await _context.Ingredients
                     .Where(i => i.Name == name)
                     .ToListAsync();
+        }
+        public async Task<IEnumerable<Ingredient>> GetAllAsync()
+        {
+            return await _context.Ingredients.OrderBy(i => i.Name).ToListAsync();
         }
     }
 }

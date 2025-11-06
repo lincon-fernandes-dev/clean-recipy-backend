@@ -34,9 +34,13 @@ namespace Infra.Data.Repositories
         {
             return await _context.Users.FindAsync(id);
         }
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
+        }
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _context.Users.Where(u => u.Email == email).FirstAsync();
         }
     }
 }

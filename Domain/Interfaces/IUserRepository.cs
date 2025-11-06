@@ -4,6 +4,6 @@ namespace Domain.Interfaces
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        Task<IEnumerable<User>> GetUsersAsync();
+        Task<User?> GetByEmailAsync(string email); 
     }
 }

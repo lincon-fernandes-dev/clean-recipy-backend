@@ -13,17 +13,10 @@ namespace Infra.Data.Repositories
         }
         public async Task<Recipe> CreateAsync(Recipe recipe)
         {
-            foreach (var ingredient in recipe.Ingredients)
-            {
-                if(ingredient.Id < 1)
-                {
-                    
-                }
-            };
-            _context.Add(recipe);
-
+            _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
-            return recipe;
+
+            return await GetByIdAsync(recipe.Id) ?? recipe; ;
         }
         public async Task<Recipe> UpdateAsync(Recipe entity)
         {
@@ -40,11 +33,37 @@ namespace Infra.Data.Repositories
 
         public async Task<Recipe?> GetByIdAsync(int id)
         {
-            return await _context.Recipes.FindAsync(id);
+            return await _context.Recipes
+                .Include(r => r.User)              // Autor da receita
+                .Include(r => r.Ingredients)       // Ingredientes
+                .Include(r => r.Instructions)      // Modo de preparo
+                .Include(r => r.RecipeTags)        // Tags
+                    .ThenInclude(rt => rt.Tag)
+                .Include(r => r.NutritionInfo)     // Informação nutricional
+                .Include(r => r.RecipeLikes)       // Likes
+                .Include(r => r.Comments)          // Comentários
+                    .ThenInclude(c => c.User)      // Autor dos comentários
+                .Include(r => r.Comments)          // Replies dos comentários
+                    .ThenInclude(c => c.Replies)
+                        .ThenInclude(r => r.User)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
-        public async Task<IEnumerable<Recipe>?> GetRecipesAsync()
+        public async Task<IEnumerable<Recipe>> GetAllAsync()
         {
-            return await _context.Recipes.ToListAsync();
+            return await _context.Recipes
+                .Include(r => r.User)              // Autor da receita
+                .Include(r => r.Ingredients)       // Ingredientes
+                .Include(r => r.Instructions)      // Modo de preparo
+                .Include(r => r.RecipeTags)        // Tags
+                    .ThenInclude(rt => rt.Tag)
+                .Include(r => r.NutritionInfo)     // Informação nutricional
+                .Include(r => r.RecipeLikes)       // Likes
+                .Include(r => r.Comments)          // Comentários
+                    .ThenInclude(c => c.User)      // Autor dos comentários
+                .AsSplitQuery() // Para melhor performance com muitos includes
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Recipe>?> GetRecipesByUserIdAsync(int userId)
