@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Validation;
 
 namespace Domain.Entities
 {
@@ -15,37 +11,139 @@ namespace Domain.Entities
         public Comment? ParentComment { get; private set; }
         public User User { get; private set; }
         public Recipe Recipe { get; private set; }
-        public IEnumerable<CommentLike> CommentLikes { get; private set; }
+        public IEnumerable<CommentLike> CommentLikes { get; private set; } = new List<CommentLike>();
         public ICollection<Comment> Replies { get; private set; } = new List<Comment>();
 
-        public Comment() { }
-        public Comment(string content, int idUser, int idRecipe)
+        private Comment() { }
+
+        public Comment(string content, int idUser, int idRecipe, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
-            Validate(content, idUser, idRecipe);
-            Content = content;
-            IdUser = idUser;
-            IdRecipe = idRecipe;
-        }
-        public Comment(int idComment, string content, int idUser, int idRecipe)
-        {
-            ValidateDomain(idComment < 1, "Id do comentario inválido, Id deve ser um numero inteiro e positivo");
             Validate(content, idUser, idRecipe);
 
-            Id = idComment;
-            Content = content;
+            Content = content.Trim();
             IdUser = idUser;
             IdRecipe = idRecipe;
         }
 
-        public static void Validate(string content, int idUser, int idRecipe)
+        public Comment(int id, string content, int idUser, int idRecipe, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
-            ValidateDomain(content.Length < 1, "Comentario nulo, verifique novamente o valor digitado");
-            ValidateDomain(content.Length > 521, "Comentario muito longo, maximo de 521 caracteres");
+            ValidateDomain(id < 1, "Id do comentário inválido. Id deve ser um número inteiro e positivo.");
+            Validate(content, idUser, idRecipe);
 
-            ValidateDomain(idUser < 1, "Id de usuario inválido, Id deve ser um numero inteiro e positivo");
-            ValidateDomain(idRecipe < 1, "Id da receita inválido, Id deve ser um numero inteiro e positivo");
-
+            Id = id;
+            Content = content.Trim();
+            IdUser = idUser;
+            IdRecipe = idRecipe;
         }
 
+        public Comment(string content, int idUser, int idRecipe, int? parentCommentId, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
+        {
+            Validate(content, idUser, idRecipe);
+            
+            if(parentCommentId != null)
+            {
+                ValidateParentCommentId((int)parentCommentId);
+            }
+
+            Content = content;
+            IdUser = idUser;
+            IdRecipe = idRecipe;
+            ParentCommentId = parentCommentId;
+        }
+
+        public Comment(int id, string content, int idUser, int idRecipe, int parentCommentId, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
+        {
+            ValidateDomain(id < 1, "Id do comentário inválido. Id deve ser um número inteiro e positivo.");
+            Validate(content, idUser, idRecipe);
+            ValidateParentCommentId(parentCommentId);
+
+            Id = id;
+            Content = content;
+            IdUser = idUser;
+            IdRecipe = idRecipe;
+            ParentCommentId = parentCommentId;
+        }
+
+        public void UpdateContent(string newContent, string modifiedBy)
+        {
+            ValidateContent(newContent);
+            ValidateModifiedBy(modifiedBy);
+
+            Content = newContent;
+            MarkAsModified(modifiedBy);
+        }
+
+        public void AddReply(Comment reply, string modifiedBy)
+        {
+            ValidateModifiedBy(modifiedBy);
+            ValidateDomain(reply == null, "A resposta não pode ser nula.");
+            ValidateDomain(reply.IdRecipe != IdRecipe, "A resposta deve ser para a mesma receita.");
+
+            Replies.Add(reply);
+            MarkAsModified(modifiedBy);
+        }
+
+        public void RemoveReply(Comment reply, string modifiedBy)
+        {
+            ValidateModifiedBy(modifiedBy);
+            ValidateDomain(reply == null, "A resposta não pode ser nula.");
+
+            Replies.Remove(reply);
+            MarkAsModified(modifiedBy);
+        }
+
+        public bool IsReply()
+        {
+            return ParentCommentId.HasValue;
+        }
+
+        public int GetRepliesCount()
+        {
+            return Replies?.Count ?? 0;
+        }
+
+        public int GetLikesCount()
+        {
+            return CommentLikes?.Count() ?? 0;
+        }
+
+        private static void Validate(string content, int idUser, int idRecipe)
+        {
+            ValidateContent(content);
+            ValidateUserId(idUser);
+            ValidateRecipeId(idRecipe);
+        }
+
+        private static void ValidateContent(string content)
+        {
+            ValidateDomain(string.IsNullOrWhiteSpace(content), "O conteúdo do comentário é obrigatório.");
+            ValidateDomain(content.Trim().Length < 1, "O comentário não pode estar vazio.");
+            ValidateDomain(content.Trim().Length > 521, "O comentário não pode ultrapassar 521 caracteres.");
+        }
+
+        private static void ValidateUserId(int idUser)
+        {
+            ValidateDomain(idUser < 1, "Id do usuário inválido. Id deve ser um número inteiro e positivo.");
+        }
+
+        private static void ValidateRecipeId(int idRecipe)
+        {
+            ValidateDomain(idRecipe < 1, "Id da receita inválido. Id deve ser um número inteiro e positivo.");
+        }
+
+        private static void ValidateParentCommentId(int parentCommentId)
+        {
+            ValidateDomain(parentCommentId < 1, "Id do comentário pai inválido. Id deve ser um número inteiro e positivo.");
+        }
+
+        private static void ValidateModifiedBy(string modifiedBy)
+        {
+            ValidateDomain(string.IsNullOrWhiteSpace(modifiedBy), "Para atualizar o comentário é necessário fornecer o nome do usuário que está modificando.");
+            ValidateDomain(modifiedBy.Trim().Length < 3, "O nome de usuário para modificação deve ter pelo menos 3 caracteres.");
+        }
     }
 }

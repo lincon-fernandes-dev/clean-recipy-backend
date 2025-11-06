@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Validation;
 
 namespace Domain.Entities
 {
@@ -13,18 +9,10 @@ namespace Domain.Entities
         public User User { get; private set; }
         public Comment Comment { get; private set; }
 
-        public CommentLike() { }
-        public CommentLike(int idCommentLike, int idComment, int idUser)
-        {
-            ValidateDomain(idCommentLike < 0, "id do like commentario invalido, id deve ser um numero inteiro positivo");
-            Validate(idComment, idUser);
+        private CommentLike() { }
 
-            Id = idCommentLike;
-            IdComment = idCommentLike;
-            IdUser = idUser;
-
-        }
-        public CommentLike(int idComment, int idUser)
+        public CommentLike(int idComment, int idUser, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
             Validate(idComment, idUser);
 
@@ -32,11 +20,62 @@ namespace Domain.Entities
             IdUser = idUser;
         }
 
-        public static void Validate(int idComment, int idUser)
+        public CommentLike(int id, int idComment, int idUser, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
-            ValidateDomain(idComment < 0, "id comentario invalido, id deve ser um numero inteiro positivo");
-            ValidateDomain(idUser < 0, "id usuario invalido, id deve ser um numero inteiro positivo");
+            ValidateDomain(id < 1, "Id inválido. Id deve ser um número inteiro e positivo.");
+            Validate(idComment, idUser);
 
+            Id = id;
+            IdComment = idComment;
+            IdUser = idUser;
+        }
+
+        public void UpdateCommentLike(int newIdComment, int newIdUser, string modifiedBy)
+        {
+            Validate(newIdComment, newIdUser);
+            ValidateModifiedBy(modifiedBy);
+
+            IdComment = newIdComment;
+            IdUser = newIdUser;
+            MarkAsModified(modifiedBy);
+        }
+
+        private static void Validate(int idComment, int idUser)
+        {
+            ValidateIdComment(idComment);
+            ValidateIdUser(idUser);
+        }
+
+        private static void ValidateIdComment(int idComment)
+        {
+            ValidateDomain(idComment < 1, "Id do comentário inválido. Id deve ser um número inteiro e positivo.");
+        }
+
+        private static void ValidateIdUser(int idUser)
+        {
+            ValidateDomain(idUser < 1, "Id do usuário inválido. Id deve ser um número inteiro e positivo.");
+        }
+
+        private static void ValidateModifiedBy(string modifiedBy)
+        {
+            ValidateDomain(string.IsNullOrWhiteSpace(modifiedBy), "Para atualizar o like do comentário é necessário fornecer o nome do usuário que está modificando.");
+            ValidateDomain(modifiedBy.Trim().Length < 3, "O nome de usuário para modificação deve ter pelo menos 3 caracteres.");
+        }
+
+        // Override do Equals para comparar CommentLike pelos mesmos IdComment e IdUser
+        public override bool Equals(object obj)
+        {
+            if (obj is CommentLike other)
+            {
+                return IdComment == other.IdComment && IdUser == other.IdUser;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(IdComment, IdUser);
         }
     }
 }

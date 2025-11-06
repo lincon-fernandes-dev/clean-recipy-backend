@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Validation;
 
 namespace Domain.Entities
 {
@@ -12,11 +8,13 @@ namespace Domain.Entities
         public int Calories { get; private set; }
         public int Proteins { get; private set; }
         public int Carbs { get; private set; }
-        public int Fat {  get; private set; }
+        public int Fat { get; private set; }
         public Recipe Recipe { get; private set; }
 
-        public NutritionInfo() { }
-        public NutritionInfo(int idRecipe, int calories, int proteins, int carbs, int fat)
+        private NutritionInfo() { }
+
+        public NutritionInfo(int idRecipe, int calories, int proteins, int carbs, int fat, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
             Validate(idRecipe, calories, proteins, carbs, fat);
 
@@ -26,26 +24,61 @@ namespace Domain.Entities
             Carbs = carbs;
             Fat = fat;
         }
-        public NutritionInfo(int idNutritionInfo, int idRecipe, int calories, int proteins, int carbs, int fat)
+
+        public NutritionInfo(int id, int idRecipe, int calories, int proteins, int carbs, int fat, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+            : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
-            ValidateDomain(idNutritionInfo < 1, "idNutritionInfo invalido, idNutritionInfo deve ser um numero inteiro positivo");
+            ValidateDomain(id < 1, "Id inválido. Id deve ser um número inteiro e positivo.");
             Validate(idRecipe, calories, proteins, carbs, fat);
 
-            Id = idNutritionInfo;
+            Id = id;
             IdRecipe = idRecipe;
             Calories = calories;
             Proteins = proteins;
             Carbs = carbs;
             Fat = fat;
         }
-        public static void Validate(int idRecipe, int calories, int proteins, int carbs, int fat)
-        {
-            ValidateDomain(idRecipe < 1, "Id invalido, id deve ser um numero inteiro positivo");
-            ValidateDomain(calories < 1, "Id calorias, id deve ser um numero inteiro positivo");
-            ValidateDomain(proteins < 1, "proteins invalido, proteins deve ser um numero inteiro positivo");
-            ValidateDomain(carbs < 1, "carbs invalido, carbs deve ser um numero inteiro positivo");
-            ValidateDomain(fat < 1, "fat invalido, fat deve ser um numero inteiro positivo");
 
+        public void UpdateNutritionInfo(int calories, int proteins, int carbs, int fat, string modifiedBy)
+        {
+            Validate(IdRecipe, calories, proteins, carbs, fat);
+            Calories = calories;
+            Proteins = proteins;
+            Carbs = carbs;
+            Fat = fat;
+            MarkAsModified(modifiedBy);
+        }
+
+        public void UpdateRecipe(int newIdRecipe, string modifiedBy)
+        {
+            ValidateDomain(newIdRecipe < 1, "Id da receita inválido. Id deve ser um número inteiro e positivo.");
+            IdRecipe = newIdRecipe;
+            MarkAsModified(modifiedBy);
+        }
+
+        private static void Validate(int idRecipe, int calories, int proteins, int carbs, int fat)
+        {
+            ValidateDomain(idRecipe < 1, "Id da receita inválido. Id deve ser um número inteiro e positivo.");
+            ValidateDomain(calories < 0, "Calorias não podem ser negativas.");
+            ValidateDomain(proteins < 0, "Proteínas não podem ser negativas.");
+            ValidateDomain(carbs < 0, "Carboidratos não podem ser negativos.");
+            ValidateDomain(fat < 0, "Gorduras não podem ser negativas.");
+
+            // Validações adicionais para valores máximos razoáveis
+            ValidateDomain(calories > 10000, "Calorias não podem exceder 10000.");
+            ValidateDomain(proteins > 1000, "Proteínas não podem exceder 1000g.");
+            ValidateDomain(carbs > 2000, "Carboidratos não podem exceder 2000g.");
+            ValidateDomain(fat > 1000, "Gorduras não podem exceder 1000g.");
+        }
+
+        public int GetTotalCalories()
+        {
+            return Calories;
+        }
+
+        public string GetNutritionSummary()
+        {
+            return $"Calorias: {Calories}kcal, Proteínas: {Proteins}g, Carboidratos: {Carbs}g, Gorduras: {Fat}g";
         }
     }
 }
