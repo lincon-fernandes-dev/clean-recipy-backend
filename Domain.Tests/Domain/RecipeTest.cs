@@ -34,7 +34,7 @@ namespace Domain.Tests.Entities
         {
             // Act
             var recipe = new Recipe(
-                _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                _validTitle, _validDescription, _validUserId, _validImageUrl,
                 _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                 _validCreatedBy, _validLastModifiedBy
             );
@@ -62,7 +62,7 @@ namespace Domain.Tests.Entities
 
             // Act
             var recipe = new Recipe(
-                id, _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                id, _validTitle, _validDescription, _validUserId, _validImageUrl,
                 _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                 _validCreatedBy, _validLastModifiedBy
             );
@@ -81,7 +81,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    invalidTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    invalidTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -97,7 +97,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    shortTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    shortTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -113,7 +113,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    longTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    longTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -129,7 +129,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, invalidDescription, _validInstructions, _validUserId, _validImageUrl,
+                    _validTitle, invalidDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -145,7 +145,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, shortDescription, _validInstructions, _validUserId, _validImageUrl,
+                    _validTitle, shortDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -161,36 +161,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, longDescription, _validInstructions, _validUserId, _validImageUrl,
-                    _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
-                    _validCreatedBy, _validLastModifiedBy
-                )
-            );
-        }
-
-        [Fact]
-        public void Constructor_WithNullInstructions_ShouldThrowDomainException()
-        {
-            // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() =>
-                new Recipe(
-                    _validTitle, _validDescription, null, _validUserId, _validImageUrl,
-                    _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
-                    _validCreatedBy, _validLastModifiedBy
-                )
-            );
-        }
-
-        [Fact]
-        public void Constructor_WithEmptyInstructions_ShouldThrowDomainException()
-        {
-            // Arrange
-            var emptyInstructions = new List<Instruction>();
-
-            // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() =>
-                new Recipe(
-                    _validTitle, _validDescription, emptyInstructions, _validUserId, _validImageUrl,
+                    _validTitle, longDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -208,7 +179,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, manyInstructions, _validUserId, _validImageUrl,
+                    _validTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -224,7 +195,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, _validInstructions, invalidUserId, _validImageUrl,
+                    _validTitle, _validDescription, invalidUserId, _validImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -241,7 +212,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    _validTitle, _validDescription, _validUserId, _validImageUrl,
                     invalidPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -258,7 +229,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    _validTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, invalidServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -277,7 +248,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                    _validTitle, _validDescription, _validUserId, _validImageUrl,
                     _validPreparationTime, _validServings, invalidDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -462,7 +433,7 @@ namespace Domain.Tests.Entities
 
             // Act
             var recipe = new Recipe(
-                _validTitle, _validDescription, _validInstructions, _validUserId, emptyImageUrl,
+                _validTitle, _validDescription, _validUserId, emptyImageUrl,
                 _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                 _validCreatedBy, _validLastModifiedBy
             );
@@ -480,7 +451,7 @@ namespace Domain.Tests.Entities
             // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() =>
                 new Recipe(
-                    _validTitle, _validDescription, _validInstructions, _validUserId, invalidImageUrl,
+                    _validTitle, _validDescription, _validUserId, invalidImageUrl,
                     _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                     _validCreatedBy, _validLastModifiedBy
                 )
@@ -490,7 +461,7 @@ namespace Domain.Tests.Entities
         private Recipe CreateValidRecipe()
         {
             return new Recipe(
-                _validTitle, _validDescription, _validInstructions, _validUserId, _validImageUrl,
+                _validTitle, _validDescription, _validUserId, _validImageUrl,
                 _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
                 _validCreatedBy, _validLastModifiedBy
             );

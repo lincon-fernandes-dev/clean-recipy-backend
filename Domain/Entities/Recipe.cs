@@ -23,14 +23,13 @@ namespace Domain.Entities
 
         private Recipe() { }
 
-        public Recipe(string title, string description, IEnumerable<Instruction> instructions, int userId, string imageUrl, int preparationTime, int servings, string difficulty, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+        public Recipe(string title, string description, int userId, string imageUrl, int preparationTime, int servings, string difficulty, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
             : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
-            Validate(title, description, instructions, userId, imageUrl, preparationTime, servings, difficulty);
+            Validate(title, description, userId, imageUrl, preparationTime, servings, difficulty);
 
             Title = title;
             Description = description;
-            Instructions = instructions;
             IdUser = userId;
             ImageUrl = imageUrl;
             PreparationTime = preparationTime;
@@ -38,16 +37,15 @@ namespace Domain.Entities
             Difficulty = difficulty;
         }
 
-        public Recipe(int id, string title, string description, IEnumerable<Instruction> instructions, int userId, string imageUrl, int preparationTime, int servings, string difficulty, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
+        public Recipe(int id, string title, string description, int userId, string imageUrl, int preparationTime, int servings, string difficulty, DateTime createdAt, DateTime updatedAt, string createdBy, string lastModifiedBy)
             : base(createdAt, updatedAt, createdBy, lastModifiedBy)
         {
             ValidateDomain(id < 1, "Id inválido. Id deve ser um número inteiro e positivo.");
-            Validate(title, description, instructions, userId, imageUrl, preparationTime, servings, difficulty);
+            Validate(title, description, userId, imageUrl, preparationTime, servings, difficulty);
 
             Id = id;
             Title = title;
             Description = description;
-            Instructions = instructions;
             IdUser = userId;
             ImageUrl = imageUrl;
             PreparationTime = preparationTime;
@@ -57,7 +55,8 @@ namespace Domain.Entities
 
         public void Update(string title, string description, IEnumerable<Instruction> instructions, string imageUrl, int preparationTime, int servings, string difficulty, string modifiedBy)
         {
-            Validate(title, description, instructions, IdUser, imageUrl, preparationTime, servings, difficulty);
+            Validate(title, description, IdUser, imageUrl, preparationTime, servings, difficulty);
+            ValidateInstructions(instructions);
             ValidateModifiedBy(modifiedBy);
 
             Title = title;
@@ -155,11 +154,10 @@ namespace Domain.Entities
             MarkAsModified(modifiedBy);
         }
 
-        private static void Validate(string title, string description, IEnumerable<Instruction> instructions, int userId, string imageUrl, int preparationTime, int servings, string difficulty)
+        private static void Validate(string title, string description, int userId, string imageUrl, int preparationTime, int servings, string difficulty)
         {
             ValidateTitle(title);
             ValidateDescription(description);
-            ValidateInstructions(instructions);
             ValidateUserId(userId);
             ValidateImageUrl(imageUrl);
             ValidatePreparationTime(preparationTime);

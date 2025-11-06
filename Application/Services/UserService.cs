@@ -24,7 +24,7 @@ public class UserService : IUserService
         var dto = _mapper.Map<UserDTO>(entity);
         return dto;
     }
-    public async Task<UserDTO?> Create(UserDTO dto)
+    public async Task<UserDTO?> Create(CreateUserDTO dto)
     {
         try
         {
@@ -39,8 +39,8 @@ public class UserService : IUserService
                 status: status,
                 createdAt: DateTime.UtcNow,
                 updatedAt: DateTime.UtcNow,
-                createdBy: "system",
-                lastModifiedBy: "system"
+                createdBy: "System",
+                lastModifiedBy: "System"
             );
 
             var retorno = await _repository.CreateAsync(user);

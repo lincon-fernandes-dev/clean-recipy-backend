@@ -9,7 +9,6 @@ namespace Application.Services
     public class RecipeService : IRecipeService
     {
         private readonly IMapper _mapper;
-        //TODO REMOVER REPOSITORIOS E SUBSTITUIR POR SERVICES
         private readonly IRecipeRepository _recipeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IIngredientRepository _ingredientRepository;
@@ -41,7 +40,7 @@ namespace Application.Services
         public async Task<IEnumerable<RecipeDTO>> GetAllRecipes()
         {
             var recipeEntities = await _recipeRepository.GetAllAsync();
-            var recipesdto = new List<RecipeDTO>(); 
+            var recipesdto = new List<RecipeDTO>();
             foreach (var recipe in recipeEntities)
             {
                 recipesdto.Add(MapToRecipeDTO(recipe));
@@ -62,11 +61,10 @@ namespace Application.Services
             if (author == null)
                 throw new ArgumentException($"User with id {recipeDTO.AuthorId} not found");
 
-            // 🔥 CORREÇÃO: Criar a receita primeiro para obter o ID
+            // 🔥 CORREÇÃO: Criar a receita primeiro sem instruções
             var recipeEntity = new Recipe(
                 title: recipeDTO.Title,
                 description: recipeDTO.Description,
-                instructions: new List<Instruction>(),
                 userId: recipeDTO.AuthorId,
                 imageUrl: recipeDTO.ImageUrl,
                 preparationTime: recipeDTO.PreparationTime,
@@ -78,15 +76,33 @@ namespace Application.Services
                 lastModifiedBy: author.Name
             );
 
-            // 🔥 CORREÇÃO: Salvar a receita primeiro para obter o ID
+            // Salvar a receita para obter o ID
             var createdRecipe = await _recipeRepository.CreateAsync(recipeEntity);
 
-            // 🔥 AGORA podemos usar createdRecipe.Id para os relacionamentos
+            // 🔥 AGORA podemos criar as instruções com o ID da receita
+            var instructions = new List<Instruction>();
+            for (int i = 0; i < recipeDTO.Instructions.Count; i++)
+            {
+                var instructionDto = recipeDTO.Instructions[i];
+                var instruction = new Instruction(
+                    idRecipe: createdRecipe.Id,
+                    content: instructionDto.Content,
+                    stepNumber: i + 1, // Step numbers começam em 1
+                    createdAt: DateTime.UtcNow,
+                    updatedAt: DateTime.UtcNow,
+                    createdBy: author.Name,
+                    lastModifiedBy: author.Name
+                );
+                var createdInstruction = await _instructionRepository.CreateAsync(instruction);
+                instructions.Add(createdInstruction);
+            }
+
+            // 🔥 Atualizar a receita com as instruções criadas
+            createdRecipe.UpdateInstructions(instructions, author.Name);
 
             // Adicionar ingredientes
-            for (int i = 0; i < recipeDTO.Ingredients.Count; i++)
+            foreach (var ingredientDto in recipeDTO.Ingredients)
             {
-                var ingredientDto = recipeDTO.Ingredients[i];
                 var ingredient = new Ingredient(
                     name: ingredientDto.Name,
                     idRecipe: createdRecipe.Id,
@@ -96,22 +112,6 @@ namespace Application.Services
                     lastModifiedBy: author.Name
                 );
                 await _ingredientRepository.CreateAsync(ingredient);
-            }
-
-            // Adicionar instruções com step numbers
-            for (int i = 1; i < recipeDTO.Instructions.Count + 1; i++)
-            {
-                var instructionDto = recipeDTO.Instructions[i];
-                var instruction = new Instruction(
-                    idRecipe: createdRecipe.Id,
-                    content: instructionDto.Content,
-                    stepNumber: i,
-                    createdAt: DateTime.UtcNow,
-                    updatedAt: DateTime.UtcNow,
-                    createdBy: author.Name,
-                    lastModifiedBy: author.Name
-                );
-                await _instructionRepository.CreateAsync(instruction);
             }
 
             // Adicionar tags (se houver)
@@ -124,12 +124,12 @@ namespace Application.Services
                     if (tag == null)
                     {
                         tag = new Tag(
-                            tagName,
+                            title: tagName,
                             createdAt: DateTime.UtcNow,
                             updatedAt: DateTime.UtcNow,
                             createdBy: author.Name,
                             lastModifiedBy: author.Name
-                            );
+                        );
                         tag = await _tagRepository.CreateAsync(tag);
                     }
 
@@ -149,7 +149,7 @@ namespace Application.Services
             if (recipeDTO.NutritionInfo != null)
             {
                 var nutritionInfo = new NutritionInfo(
-                    idRecipe: createdRecipe.Id, // 🔥 Usar o ID da receita criada
+                    idRecipe: createdRecipe.Id,
                     calories: recipeDTO.NutritionInfo.Calories,
                     proteins: recipeDTO.NutritionInfo.Proteins,
                     carbs: recipeDTO.NutritionInfo.Carbs,
@@ -190,6 +190,7 @@ namespace Application.Services
             var deletedRecipe = await _recipeRepository.DeleteAsync(recipe);
             return _mapper.Map<RecipeDTO>(deletedRecipe);
         }
+
         private RecipeDTO MapToRecipeDTO(Recipe recipe)
         {
             if (recipe == null) return new RecipeDTO();
@@ -219,8 +220,9 @@ namespace Application.Services
                 Instructions = recipe.Instructions?.Select(i => new InstructionDTO
                 {
                     Id = i.Id,
-                    Content = i.Content
-                }).ToList() ?? new List<InstructionDTO>(),
+                    Content = i.Content,
+                    StepNumber = i.StepNumber
+                }).OrderBy(i => i.StepNumber).ToList() ?? new List<InstructionDTO>(),
                 Tags = recipe.RecipeTags?.Select(rt => rt.Tag?.Title ?? string.Empty)
                                     .Where(title => !string.IsNullOrEmpty(title))
                                     .ToList() ?? new List<string>(),

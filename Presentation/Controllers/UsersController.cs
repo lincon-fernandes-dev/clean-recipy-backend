@@ -11,8 +11,8 @@ public class UsersController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
-    [HttpPost("CreateUser")]
-    public async Task<IActionResult> Create(UserDTO dto)
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateUserDTO dto)
     {
         var user = await _userService.Create(dto);
         if (user == null) return NoContent();
