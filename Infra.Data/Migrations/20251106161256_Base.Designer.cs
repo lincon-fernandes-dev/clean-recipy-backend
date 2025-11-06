@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251105153717_Base")]
+    [Migration("20251106161256_Base")]
     partial class Base
     {
         /// <inheritdoc />
@@ -214,6 +214,10 @@ namespace Infra.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StepNumber")
+                        .HasColumnType("int")
+                        .HasColumnName("StepNumber");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()

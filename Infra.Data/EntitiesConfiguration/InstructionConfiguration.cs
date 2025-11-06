@@ -31,6 +31,10 @@ namespace Infra.Data.EntitiesConfiguration
                 .IsRequired()
                 .HasColumnName("IdRecipe");
 
+
+            builder.Property(i => i.StepNumber)
+                .IsRequired()
+                .HasColumnName("StepNumber");
             // Campos de auditoria
             builder.Property(i => i.CreatedAt)
                 .IsRequired()
