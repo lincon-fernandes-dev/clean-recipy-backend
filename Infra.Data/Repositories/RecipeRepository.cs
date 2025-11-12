@@ -34,18 +34,18 @@ namespace Infra.Data.Repositories
         public async Task<Recipe?> GetByIdAsync(int id)
         {
             return await _context.Recipes
-                .Include(r => r.User)              // Autor da receita
-                .Include(r => r.Ingredients)       // Ingredientes
-                .Include(r => r.Instructions)      // Modo de preparo
-                .Include(r => r.RecipeTags)        // Tags
+                .Include(r => r.User)
+                .Include(r => r.Ingredients)
+                .Include(r => r.Instructions)
+                .Include(r => r.RecipeTags)
                     .ThenInclude(rt => rt.Tag)
-                .Include(r => r.NutritionInfo)     // Informação nutricional
-                .Include(r => r.RecipeLikes)       // Likes
-                .Include(r => r.Comments)          // Comentários
-                    .ThenInclude(c => c.User)      // Autor dos comentários
-                .Include(r => r.Comments)          // Replies dos comentários
+                .Include(r => r.NutritionInfo)
+                .Include(r => r.RecipeLikes)
+                .Include(r => r.Comments.Where(c => c.ParentCommentId == null))
+                    .ThenInclude(c => c.User)
+                .Include(r => r.Comments.Where(c => c.ParentCommentId == null))
                     .ThenInclude(c => c.Replies)
-                        .ThenInclude(r => r.User)
+                    .ThenInclude(r => r.User)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(r => r.Id == id);
         }

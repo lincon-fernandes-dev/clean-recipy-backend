@@ -15,14 +15,17 @@ namespace Application.Mappings
                     src.RecipeTags != null ? src.RecipeTags.Select(rt => rt.Tag.Title) : new List<string>()))
                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients))
                 .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
+                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
                 .ForMember(dest => dest.NutritionInfo, opt => opt.MapFrom(src => src.NutritionInfo));
 
             // Mapeamentos simples
-            CreateMap<User, UserDTO>();
-            CreateMap<Ingredient, IngredientDTO>();
-            CreateMap<Instruction, InstructionDTO>();
-            CreateMap<NutritionInfo, NutritionInfoDTO>();
-            CreateMap<Tag, TagDTO>();
+            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Ingredient, IngredientDTO>().ReverseMap();
+            CreateMap<Instruction, InstructionDTO>().ReverseMap();
+            CreateMap<NutritionInfo, NutritionInfoDTO>().ReverseMap();
+            CreateMap<Tag, TagDTO>().ReverseMap();
+            CreateMap<Comment, CommentDTO>().ReverseMap();
+            CreateMap<Comment, CreateCommentDTO>().ReverseMap();
 
             // Mapeamento reverso (se necessário)
             CreateMap<RecipeDTO, Recipe>()
@@ -43,9 +46,6 @@ namespace Application.Mappings
                 .ForMember(dest => dest.NutritionInfo, opt => opt.Ignore())
                 .ForMember(dest => dest.RecipeLikes, opt => opt.Ignore())
                 .ForMember(dest => dest.Comments, opt => opt.Ignore());
-
-            // 🔥 REMOVER este mapeamento problemático
-            // CreateMap<Tag, string>().ConvertUsing(t => t.Title);
         }
     }
 }

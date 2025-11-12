@@ -7,10 +7,11 @@ namespace Domain.Entities
         public int IdUser { get; private set; }
         public string Title { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
-        public IEnumerable<Instruction> Instructions { get; private set; } = new List<Instruction>();
-        public IEnumerable<RecipeTag> RecipeTags { get; private set; } = new List<RecipeTag>();
-        public IEnumerable<RecipeLike> RecipeLikes { get; private set; } = new List<RecipeLike>();
-        public IEnumerable<Comment> Comments { get; private set; } = new List<Comment>();
+        public IEnumerable<Instruction> Instructions { get; set; } = new List<Instruction>();
+        public IEnumerable<RecipeTag> RecipeTags { get; set; } = new List<RecipeTag>();
+        public IEnumerable<RecipeLike> RecipeLikes { get; set; } = new List<RecipeLike>();
+        public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
         public NutritionInfo NutritionInfo { get; private set; }
         public string ImageUrl { get; private set; } = string.Empty;
         public int PreparationTime { get; private set; }
@@ -19,7 +20,6 @@ namespace Domain.Entities
 
         // 🔹 Relacionamentos
         public User? User { get; private set; }
-        public ICollection<Ingredient> Ingredients { get; private set; } = new List<Ingredient>();
 
         private Recipe() { }
 

@@ -27,6 +27,7 @@ namespace Infra.IoC
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IRecipeTagRepository, RecipeTagRepository>();
             services.AddScoped<INutritionInfoRepository, NutritionInfoRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
             // Services
             services.AddScoped<IUserService, UserService>();
@@ -34,6 +35,7 @@ namespace Infra.IoC
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IInstructionService, InstructionService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<ICommentService, CommentService>();
 
             services.AddAutoMapper(cfg => cfg.AddProfile<DomainToDTOMappingProfile>());
 

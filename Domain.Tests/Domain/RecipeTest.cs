@@ -42,7 +42,6 @@ namespace Domain.Tests.Entities
             // Assert
             recipe.Title.Should().Be(_validTitle);
             recipe.Description.Should().Be(_validDescription);
-            recipe.Instructions.Should().HaveCount(3);
             recipe.IdUser.Should().Be(_validUserId);
             recipe.ImageUrl.Should().Be(_validImageUrl);
             recipe.PreparationTime.Should().Be(_validPreparationTime);
@@ -168,23 +167,6 @@ namespace Domain.Tests.Entities
             );
         }
 
-        [Fact]
-        public void Constructor_WithTooManyInstructions_ShouldThrowDomainException()
-        {
-            // Arrange
-            var manyInstructions = Enumerable.Range(1, 51)
-                .Select(i => new Instruction(i, $"Instrução {i}", i, DateTime.UtcNow, DateTime.UtcNow, "system", "system"))
-                .ToList();
-
-            // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() =>
-                new Recipe(
-                    _validTitle, _validDescription, _validUserId, _validImageUrl,
-                    _validPreparationTime, _validServings, _validDifficulty, _validCreatedAt, _validUpdatedAt,
-                    _validCreatedBy, _validLastModifiedBy
-                )
-            );
-        }
 
         [Theory]
         [InlineData(0)]

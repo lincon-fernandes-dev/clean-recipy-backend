@@ -16,6 +16,7 @@ namespace Application.Services
         private readonly ITagRepository _tagRepository;
         private readonly IRecipeTagRepository _recipeTagRepository;
         private readonly INutritionInfoRepository _nutritionInfoRepository;
+        private readonly ICommentRepository _commentRepository;
 
         public RecipeService(
             IMapper mapper,
@@ -25,7 +26,8 @@ namespace Application.Services
             IInstructionRepository instructionRepository,
             ITagRepository tagRepository,
             IRecipeTagRepository recipeTagRepository,
-            INutritionInfoRepository nutritionInfoRepository)
+            INutritionInfoRepository nutritionInfoRepository,
+            ICommentRepository commentRepository)
         {
             _recipeRepository = recipeRepository;
             _mapper = mapper;
@@ -35,6 +37,7 @@ namespace Application.Services
             _tagRepository = tagRepository;
             _recipeTagRepository = recipeTagRepository;
             _nutritionInfoRepository = nutritionInfoRepository;
+            _commentRepository = commentRepository;
         }
 
         public async Task<IEnumerable<RecipeDTO>> GetAllRecipes()
@@ -51,6 +54,11 @@ namespace Application.Services
         public async Task<RecipeDTO?> GetById(int id)
         {
             var recipeEntity = await _recipeRepository.GetByIdAsync(id);
+
+            if (recipeEntity == null)
+                return null;
+
+            recipeEntity.Comments = await _commentRepository.GetCommentsByIdRecipeAsync(id);
             return MapToRecipeDTO(recipeEntity);
         }
 
@@ -61,7 +69,6 @@ namespace Application.Services
             if (author == null)
                 throw new ArgumentException($"User with id {recipeDTO.AuthorId} not found");
 
-            // 🔥 CORREÇÃO: Criar a receita primeiro sem instruções
             var recipeEntity = new Recipe(
                 title: recipeDTO.Title,
                 description: recipeDTO.Description,
@@ -191,52 +198,79 @@ namespace Application.Services
             return _mapper.Map<RecipeDTO>(deletedRecipe);
         }
 
-        private RecipeDTO MapToRecipeDTO(Recipe recipe)
+        private RecipeDTO MapToRecipeDTO(Recipe recipeEntity)
         {
-            if (recipe == null) return new RecipeDTO();
+            if (recipeEntity == null) return null;
 
-            return new RecipeDTO
+            var recipeDto = new RecipeDTO
             {
-                Id = recipe.Id,
-                Title = recipe.Title,
-                Description = recipe.Description,
-                ImageUrl = recipe.ImageUrl,
-                PreparationTime = recipe.PreparationTime,
-                Servings = recipe.Servings,
-                Difficulty = recipe.Difficulty,
-                Author = recipe.User != null ? new UserDTO
+                IdRecipe = recipeEntity.Id,
+                Title = recipeEntity.Title,
+                Description = recipeEntity.Description,
+                ImageUrl = recipeEntity.ImageUrl,
+                PreparationTime = recipeEntity.PreparationTime,
+                Servings = recipeEntity.Servings,
+                Difficulty = recipeEntity.Difficulty,
+                CreatedAt = recipeEntity.CreatedAt,
+                UpdatedAt = recipeEntity.UpdatedAt,
+
+                // Autor
+                Author = recipeEntity.User != null ? new UserDTO
                 {
-                    Id = recipe.User.Id,
-                    Name = recipe.User.Name,
-                    Email = recipe.User.Email,
-                    Avatar = recipe.User.Avatar,
-                    IsVerified = recipe.User.IsVerified
+                    IdUser = recipeEntity.User.Id,
+                    Name = recipeEntity.User.Name,
+                    Email = recipeEntity.User.Email,
+                    Avatar = recipeEntity.User.Avatar
                 } : null,
-                Ingredients = recipe.Ingredients?.Select(i => new IngredientDTO
+
+                // Ingredientes
+                Ingredients = recipeEntity.Ingredients?.Select(i => new IngredientDTO
                 {
-                    Id = i.Id,
+                    IdIngredient = i.Id,
                     Name = i.Name
                 }).ToList() ?? new List<IngredientDTO>(),
-                Instructions = recipe.Instructions?.Select(i => new InstructionDTO
+
+                // Instruções
+                Instructions = recipeEntity.Instructions?.Select(i => new InstructionDTO
                 {
-                    Id = i.Id,
-                    Content = i.Content,
-                    StepNumber = i.StepNumber
+                    IdInstruction = i.Id,
+                    StepNumber = i.StepNumber,
+                    Content = i.Content
                 }).OrderBy(i => i.StepNumber).ToList() ?? new List<InstructionDTO>(),
-                Tags = recipe.RecipeTags?.Select(rt => rt.Tag?.Title ?? string.Empty)
-                                    .Where(title => !string.IsNullOrEmpty(title))
-                                    .ToList() ?? new List<string>(),
-                NutritionInfo = recipe.NutritionInfo != null ? new NutritionInfoDTO
+
+                // Tags
+                Tags = recipeEntity.RecipeTags?.Select(rt => rt.Tag?.Title)
+                                      .Where(title => !string.IsNullOrEmpty(title))
+                                      .ToList() ?? new List<string>(),
+
+                // Informação nutricional
+                NutritionInfo = recipeEntity.NutritionInfo != null ? new NutritionInfoDTO
                 {
-                    Id = recipe.NutritionInfo.Id,
-                    Calories = recipe.NutritionInfo.Calories,
-                    Proteins = recipe.NutritionInfo.Proteins,
-                    Carbs = recipe.NutritionInfo.Carbs,
-                    Fat = recipe.NutritionInfo.Fat
+                    Calories = recipeEntity.NutritionInfo.Calories,
+                    Proteins = recipeEntity.NutritionInfo.Proteins,
+                    Carbs = recipeEntity.NutritionInfo.Carbs,
+                    Fat = recipeEntity.NutritionInfo.Fat
                 } : null,
-                CreatedAt = recipe.CreatedAt,
-                UpdatedAt = recipe.UpdatedAt
+                Comments = recipeEntity.Comments?.Select(c => new CommentDTO
+                {
+                    Author = new UserDTO
+                    {
+                        IdUser = recipeEntity.User.Id,
+                        Name = recipeEntity.User.Name,
+                        Email = recipeEntity.User.Email,
+                        Avatar = recipeEntity.User.Avatar
+                    },
+                    IdComment = c.Id,
+                    CreatedAt = c.CreatedAt,
+                    Content = c.Content,
+                    IdRecipe = c.IdRecipe,
+                    IdUser = c.IdUser,
+                    isCommentLiked = true,
+                    UpdatedAt = c.UpdatedAt
+                }).ToList() ?? new List<CommentDTO>()
             };
+
+            return recipeDto;
         }
     }
 }

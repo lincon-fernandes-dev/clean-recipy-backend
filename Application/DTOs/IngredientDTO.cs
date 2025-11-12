@@ -2,7 +2,7 @@
 {
     public class IngredientDTO
     {
-        public int Id { get; set; }
+        public int IdIngredient { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 }
